@@ -69,10 +69,81 @@ def get_my_event(db: Session = Depends(get_db), current_user: models.User = Depe
 
     return events
 
-@router.put("/update/{id}", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
-def update_event_details(id: int, event: EventCreate, db: Session = Depends(get_db)):
-    pass
+#to update the event
+@router.put("/update/{id}", response_model=EventResponse, status_code=status.HTTP_200_OK)
+def update_event_details(id: int, event: EventCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    
+    if current_user.role != UserRole.organizer:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only organizer can update the event details"
+        )
+    
+    if event.event_datetime <= datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Event time should be future time"
+        )
+    
+    existing_event = db.query(models.Event).filter(
+        models.Event.id == id,
+        models.Event.organizer_id == current_user.id,
+    ).first()
 
-@router.delete("/delete/{id}", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
-def delete_event(id: int, db: Session = Depends(get_db)):
-    pass
+    if not existing_event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not exist"
+        )
+    
+    if event.event_seats < existing_event.booked_seats:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Total seats can not be less than booked seats"
+        )
+    
+    existing_event.event_name = event.event_name
+    existing_event.event_address = event.event_address
+    existing_event.event_datetime = event.event_datetime
+    existing_event.event_seats = event.event_seats
+    existing_event.seat_price = event.seat_price
+
+    db.commit()
+    db.refresh(existing_event)
+
+    return existing_event
+
+@router.patch("/cancel/{id}", response_model=EventResponse, status_code=status.HTTP_200_OK)
+def cancel_event(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    
+    if current_user.role != UserRole.organizer:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only organizer can cancel event"
+        )
+    
+    existing_event = db.query(models.Event).filter(
+        models.Event.id == id,
+        models.Event.organizer_id == current_user.id
+    ).first()
+
+    if not existing_event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not exist"
+        )
+    
+    if existing_event.event_status == EventStatus.CANCELLED:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Event is already cancelled"
+        )
+
+
+    existing_event.event_status = EventStatus.CANCELLED
+    existing_event.is_event_booking_paused = True
+    
+    db.commit()
+    db.refresh(existing_event)
+
+    return existing_event
