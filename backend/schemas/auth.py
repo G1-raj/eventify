@@ -1,9 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from enum import Enum
-
-class UserRole(str, Enum):
-    user = "user"
-    organizer = "organizer"
+from core.enum import UserRole
 
 class UserCreate(BaseModel):
     email: EmailStr
