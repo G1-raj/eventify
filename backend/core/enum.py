@@ -9,3 +9,8 @@ class EventStatus(str, Enum):
     SOLD_OUT = "SOLD_OUT"
     COMPLETED = "COMPLETED"
     CANCELLED = "CANCELLED"
+
+class BookingStatus(str, Enum):
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
+    FAILED = "FAILED"

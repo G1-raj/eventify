@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from core.enum import EventStatus
+from core.enum import EventStatus, BookingStatus
 from typing import List
 from datetime import datetime
 
@@ -31,5 +31,14 @@ class EventResponse(BaseModel):
     banner: List[str]
 
 
+class BookEvent(BaseModel):
+    event_id: int
+    no_of_seats: int
 
-#User features
+
+class BookEventResponse(BaseModel):
+    id: int
+    event_name: str
+    event_datetime: datetime
+    no_of_seats: int
+    booking_status: BookingStatus

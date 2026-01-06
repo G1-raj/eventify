@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Float, Integer, JS
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from db.database import Base
-from core.enum import UserRole, EventStatus
+from core.enum import UserRole, EventStatus, BookingStatus
 
 
 
@@ -33,6 +33,9 @@ class User(Base):
         onupdate=lambda: datetime.now(timezone.utc)
     )
 
+    events = relationship("Event", back_populates="owner", cascade="all, delete-orphan")
+    bookings = relationship("Booking", back_populates="owner", cascade="all, delete-orphan")
+
 
 class Event(Base):
     __tablename__ = "events"
@@ -49,7 +52,31 @@ class Event(Base):
     banner = Column(JSON,nullable=True)
     organizer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="events")
+    bookings = relationship("Booking", back_populates="event", cascade="all, delete-orphan")
 
+    created_at = Column(
+        DateTime(timezone=True),
+        default= lambda: datetime.now(timezone.utc)
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
+
+class Booking(Base):
+    __tablename__ = "bookings"
+
+    id = Column(Integer, primary_key=True)
+    no_of_seats = Column(Integer, nullable=False, default=1)
+    booking_status = Column(SQLEnum(BookingStatus), nullable=False, default=BookingStatus.CONFIRMED)
+
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    owner = relationship("User", back_populates="bookings")
+    event = relationship("Event", back_populates="bookings")
     created_at = Column(
         DateTime(timezone=True),
         default= lambda: datetime.now(timezone.utc)
