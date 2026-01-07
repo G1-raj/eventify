@@ -31,6 +31,13 @@ class EventResponse(BaseModel):
     banner: List[str]
 
 
+class PaginatedEventResponse(BaseModel):
+    page: int
+    limit: int
+    total: int
+    data: List[EventResponse]
+
+
 class BookEvent(BaseModel):
     event_id: int
     no_of_seats: int
