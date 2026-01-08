@@ -5,13 +5,14 @@ from core.enum import UserRole
 from models import models
 from utils.security import get_password, verify_password
 from utils.jwt import create_access_token, create_refresh_token
+from utils.rate_limiting_dependencies import login_rate_limit
 from schemas.auth import UserCreate, UserLogin, UserResponse, AuthResponse
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/signup", response_model = UserResponse, status_code = status.HTTP_201_CREATED)
+@router.post("/signup", response_model = UserResponse, status_code = status.HTTP_201_CREATED, dependencies=[Depends(login_rate_limit)])
 def signup(user: UserCreate, role: UserRole, db: Session = Depends(get_db)):
 
     existing_user = db.query(models.User).filter(models.User.email == user.email).first()
@@ -37,7 +38,7 @@ def signup(user: UserCreate, role: UserRole, db: Session = Depends(get_db)):
 
     return new_user
 
-@router.post("/login", response_model=AuthResponse)
+@router.post("/login", response_model=AuthResponse, dependencies=[Depends(login_rate_limit)])
 def login(user: UserLogin, db: Session = Depends(get_db)):
 
     existing_user = db.query(models.User).filter(models.User.email == user.email).first()

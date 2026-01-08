@@ -7,6 +7,7 @@ from db.database import get_db
 from utils.dependencies import get_current_user
 from core.enum import UserRole, BookingStatus, EventStatus
 from datetime import datetime, timezone
+from utils.rate_limiting_dependencies import booking_rate_limit, cancel_booking_rate_limit
 
 router = APIRouter(prefix="/book", tags=["book", "event"])
 
@@ -60,7 +61,7 @@ def get_my_all_booked_events(
 
 
 
-@router.post("/book-event", response_model=BookEventResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/book-event", response_model=BookEventResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(booking_rate_limit)])
 def book_event(event: BookEvent ,db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     
     if current_user.role != UserRole.user:
@@ -121,7 +122,7 @@ def book_event(event: BookEvent ,db: Session = Depends(get_db), current_user: mo
         )
     
 
-@router.patch("/cancel-booking/{id}", response_model=CancelBookingResponse, status_code=status.HTTP_200_OK)
+@router.patch("/cancel-booking/{id}", response_model=CancelBookingResponse, status_code=status.HTTP_200_OK, dependencies=[cancel_booking_rate_limit])
 def cancel_my_booking(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
 
     if current_user.role != UserRole.user:
