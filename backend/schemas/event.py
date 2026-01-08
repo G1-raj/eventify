@@ -49,3 +49,16 @@ class BookEventResponse(BaseModel):
     event_datetime: datetime
     no_of_seats: int
     booking_status: BookingStatus
+
+
+class BookedEventItem(BaseModel):
+    booking_id: int
+    no_of_seats: int
+    booking_status: BookingStatus
+    event: EventResponse
+
+class PaginatedBookedEventItem(BaseModel):
+    page: int
+    limit: int
+    total: int
+    data: List[BookedEventItem]

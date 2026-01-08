@@ -1,14 +1,64 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from models import models
-from schemas.event import BookEvent, BookEventResponse
+from schemas.event import BookEvent, BookEventResponse, PaginatedBookedEventItem
 from db.database import get_db
 from utils.dependencies import get_current_user
 from core.enum import UserRole, BookingStatus, EventStatus
 from datetime import datetime, timezone
 
 router = APIRouter(prefix="/book", tags=["book", "event"])
+
+@router.get("/get-booked-events", response_model=PaginatedBookedEventItem, status_code=status.HTTP_200_OK)
+def get_my_all_booked_events(
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(get_current_user), 
+    page: int = Query(1, ge=1), 
+    limit: int = Query(10, ge=1, le=50)
+):
+    
+    offset = (page - 1) * limit
+    
+    base_query = (
+        db.query(models.Booking).join(models.Event)
+        .filter(
+            models.Booking.user_id == current_user.id,
+            models.Booking.booking_status == BookingStatus.CONFIRMED
+        )
+        .order_by(models.Booking.created_at.desc())
+    )
+
+    bookings = (
+        base_query
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    total = base_query.count()
+
+    data = [
+        {
+            "booking_id": booking.id,
+            "no_of_seats": booking.no_of_seats,
+            "booking_status": booking.booking_status,
+            "event": booking.event
+        }
+
+        for booking in bookings
+    ]
+
+    return {
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "data": data
+    }
+
+    
+
+
 
 @router.post("/book-event", response_model=BookEventResponse, status_code=status.HTTP_201_CREATED)
 def book_event(event: BookEvent ,db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
