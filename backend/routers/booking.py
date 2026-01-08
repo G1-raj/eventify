@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from models import models
-from schemas.event import BookEvent, BookEventResponse, PaginatedBookedEventItem
+from schemas.event import BookEvent, BookEventResponse, PaginatedBookedEventItem, CancelBookingResponse
 from db.database import get_db
 from utils.dependencies import get_current_user
 from core.enum import UserRole, BookingStatus, EventStatus
@@ -119,3 +119,64 @@ def book_event(event: BookEvent ,db: Session = Depends(get_db), current_user: mo
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Booking failed"
         )
+    
+
+@router.patch("/cancel-booking/{id}", response_model=CancelBookingResponse, status_code=status.HTTP_200_OK)
+def cancel_my_booking(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+
+    if current_user.role != UserRole.user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only user can cancel booked events"
+        )
+    
+    try:
+
+        with db.begin():
+            booking = (
+                db.query(models.Booking)
+                .filter(
+                    models.Booking.id == id,
+                    models.Booking.user_id == current_user.id,
+                    models.Booking.booking_status == BookingStatus.CONFIRMED
+                )
+                .first()
+            )
+
+            if not booking:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Booking not fount or already cancelled"
+                )
+            
+            event = (
+                db.query(models.Event)
+                .filter(
+                    models.Event.id == booking.event_id
+                )
+                .with_for_update()
+                .first()
+            )
+
+            event.booked_seats -= booking.no_of_seats
+
+            if event.booked_seats < 0:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Seat count inconsistency detected"
+                )
+            
+            booking.booking_status = BookingStatus.CANCELLED
+
+            return {
+                "booking_id": booking.id,
+                "booking_status": booking.booking_status
+            }
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to cancel booking"
+        )
+
+
+    

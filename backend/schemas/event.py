@@ -57,8 +57,16 @@ class BookedEventItem(BaseModel):
     booking_status: BookingStatus
     event: EventResponse
 
+    class Config:
+        from_attributes = True
+
 class PaginatedBookedEventItem(BaseModel):
     page: int
     limit: int
     total: int
     data: List[BookedEventItem]
+
+
+class CancelBookingResponse(BaseModel):
+    booking_id: int
+    booking_status: BookingStatus
