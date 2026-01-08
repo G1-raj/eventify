@@ -122,7 +122,7 @@ def book_event(event: BookEvent ,db: Session = Depends(get_db), current_user: mo
         )
     
 
-@router.patch("/cancel-booking/{id}", response_model=CancelBookingResponse, status_code=status.HTTP_200_OK, dependencies=[cancel_booking_rate_limit])
+@router.patch("/cancel-booking/{id}", response_model=CancelBookingResponse, status_code=status.HTTP_200_OK, dependencies=[Depends(cancel_booking_rate_limit)])
 def cancel_my_booking(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
 
     if current_user.role != UserRole.user:
