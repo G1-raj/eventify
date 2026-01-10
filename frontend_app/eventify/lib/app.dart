@@ -1,4 +1,4 @@
-import 'package:eventify/features/auth/signup/presentation/signup_screen.dart';
+import 'package:eventify/features/organizer/create_event/presentation/create_event_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignupScreen()
+      home: CreateEventScreen()
     );
   }
 }
