@@ -1,3 +1,4 @@
+import 'package:eventify/core/widgets/action_button/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -32,6 +33,72 @@ class CreateEventScreen extends StatelessWidget {
             child: Center(
               child: Column(
                 children: [
+
+                  SizedBox(
+                    width: screenWidth * 0.8,
+                    child: EventDetailInput(
+                      inputTitle: "Event Name",
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: screenHeight * 0.02,
+                  ),
+
+                  SizedBox(
+                    width: screenWidth * 0.8,
+                    child: EventDetailInput(
+                      inputTitle: "Event Address",
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: screenHeight * 0.02,
+                  ),
+
+                  SizedBox(
+                    width: screenWidth * 0.8,
+                    child: EventDetailInput(
+                      inputTitle: "Event Date and Time",
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: screenHeight * 0.02,
+                  ),
+
+                  SizedBox(
+                    width: screenWidth * 0.8,
+                    child: EventDetailInput(
+                      inputTitle: "Event Seats",
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: screenHeight * 0.02,
+                  ),
+
+                  SizedBox(
+                    width: screenWidth * 0.8,
+                    child: EventDetailInput(
+                      inputTitle: "Seat price",
+                    ),
+                  ),
+
+                   SizedBox(
+                    height: screenHeight * 0.04,
+                  ),
+
+                  SizedBox(
+                    width: screenWidth * 0.5,
+                    height: screenHeight * 0.05,
+                    child: ActionButton(
+                      buttonText: "Create Event", 
+                      textColor: Color.fromRGBO(255, 255, 255, 1), 
+                      fontSize: screenWidth * 0.05, 
+                      buttonColor: Colors.blue
+                    ),
+                  )
                   
                 ],
               ),
@@ -44,10 +111,59 @@ class CreateEventScreen extends StatelessWidget {
 }
 
 class EventDetailInput extends StatelessWidget {
-  const EventDetailInput({super.key});
+  final String inputTitle;
+  const EventDetailInput(
+    {
+      super.key,
+      required this.inputTitle
+    }
+  );
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(inputTitle, style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16
+          ),)
+        ),
+
+        SizedBox(
+          height: 3,
+        ),
+
+        TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.grey, width: 1)
+            ),
+
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.grey, width: 1)
+            ),
+
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.grey, width: 1)
+            ),
+
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.red, width: 1)
+            ),
+
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.blue, width: 1)
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

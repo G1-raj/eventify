@@ -10,7 +10,12 @@ class OrganizerHomeScreen extends StatelessWidget {
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
 
       body: Center(
-        child: Text("Home screen"),
+        child: EventCard(
+          eventName: "Karan Aujla Concert",
+          eventAddress: "South Delhi",
+          eventDateTime: "2026-12-02:12:55",
+          eventStatus: "UPCOMING",
+        ),
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -18,6 +23,178 @@ class OrganizerHomeScreen extends StatelessWidget {
         shape: const CircleBorder(),
         backgroundColor: Colors.blue,
         child: Icon(Icons.add, color: Colors.white,),
+      ),
+    );
+  }
+}
+
+
+class EventCard extends StatelessWidget {
+  final String? imageUrl;
+  final String eventName;
+  final String eventAddress;
+  final String eventStatus;
+  final String eventDateTime;
+
+  const EventCard({
+    super.key,
+    this.imageUrl,
+    required this.eventName,
+    required this.eventAddress,
+    required this.eventStatus,
+    required this.eventDateTime,
+  });
+
+  Color _statusColor() {
+    switch (eventStatus) {
+      case "UPCOMING":
+        return Colors.green;
+      case "CANCELLED":
+        return Colors.red;
+      case "COMPLETED":
+        return Colors.grey;
+      default:
+        return Colors.orange;
+    }
+  }
+
+  Widget _buildImageSection() {
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return Container(
+        width: 110,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+        ),
+        child: const Center(
+          child: Text(
+            "NAN",
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Image.network(
+      imageUrl!,
+      width: 110,
+      height: double.infinity,
+      fit: BoxFit.cover,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      width: screenWidth * 0.95,
+      height: 120,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          // IMAGE / NAN SECTION
+          ClipRRect(
+            borderRadius: const BorderRadius.horizontal(
+              left: Radius.circular(14),
+            ),
+            child: _buildImageSection(),
+          ),
+
+          const SizedBox(width: 12),
+
+          // DETAILS SECTION
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    eventName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          eventAddress,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            eventDateTime,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor().withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          eventStatus,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: _statusColor(),
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
