@@ -1,4 +1,4 @@
-import 'package:eventify/features/organizer/organizer_home/presentation/organizer_home_screen.dart';
+import 'package:eventify/router/router.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
@@ -6,9 +6,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
-      home: OrganizerHomeScreen(),
+      // home: OrganizerHomeScreen(),
     );
   }
 }
