@@ -6,6 +6,7 @@ import 'package:eventify/features/organizer/organizer_home/presentation/organize
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(
+  initialLocation: "/organizer-home",
   routes: [
     //auth
     GoRoute(
