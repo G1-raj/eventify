@@ -9,13 +9,60 @@ class OrganizerHomeScreen extends StatelessWidget {
 
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
 
-      body: Center(
-        child: EventCard(
-          eventName: "Karan Aujla Concert",
-          eventAddress: "South Delhi",
-          eventDateTime: "2026-12-02:12:55",
-          eventStatus: "UPCOMING",
-        ),
+      appBar: AppBar(
+        title: Text("Home"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+      ),
+
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 16, 8),
+            child: SizedBox(
+              width: double.infinity, // 👈 forces full width
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Hi 👋",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "Govind",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: 6,
+              itemBuilder: (context, index) {
+                return EventCard(
+                  eventName: "Karan Aujla Concert",
+                  eventAddress: "South Delhi",
+                  eventDateTime: "2026-12-02:12:55",
+                  eventStatus: "UPCOMING",
+                );
+              },
+            ),
+          )
+        ],
       ),
 
       floatingActionButton: FloatingActionButton(
