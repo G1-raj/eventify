@@ -1,6 +1,7 @@
 import 'package:eventify/core/widgets/action_button/action_button.dart';
 import 'package:eventify/core/widgets/input_field/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupScreen extends StatelessWidget {
@@ -115,6 +116,18 @@ class SignupScreen extends StatelessWidget {
                     textColor: Colors.white,
                     fontSize: screenWidth * 0.05,
                   )
+                ),
+
+                SizedBox(
+                  height: screenHeight * 0.06,
+                ),
+
+                GestureDetector(
+                  onTap: () {
+                    context.pop();
+                  },
+
+                  child: Text("Already have an account? Login"),
                 )
               ],
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class OrganizerHomeScreen extends StatelessWidget {
   const OrganizerHomeScreen({super.key});
@@ -53,11 +54,29 @@ class OrganizerHomeScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: 6,
               itemBuilder: (context, index) {
-                return EventCard(
-                  eventName: "Karan Aujla Concert",
-                  eventAddress: "South Delhi",
-                  eventDateTime: "2026-12-02:12:55",
-                  eventStatus: "UPCOMING",
+                return GestureDetector(
+                  onTap: () {
+                    context.push(
+                      "/event-details", 
+                      extra: {
+                        "imageUrl": null,
+                        "eventName": "Karan Aujla Concert",
+                        "eventAddress": "South Delhi",
+                        "eventDateTime": "2026-12-02 12:55",
+                        "totalSeats": 500,
+                        "bookedSeats": 320,
+                        "seatPrice": 1500.0,
+                        "eventStatus": "UPCOMING",
+                        "isBookingPaused": false,
+                      }
+                    );
+                  },
+                  child: EventCard(
+                    eventName: "Karan Aujla Concert",
+                    eventAddress: "South Delhi",
+                    eventDateTime: "2026-12-02:12:55",
+                    eventStatus: "UPCOMING",
+                  ),
                 );
               },
             ),
@@ -66,7 +85,9 @@ class OrganizerHomeScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.push("/create-event");
+        },
         shape: const CircleBorder(),
         backgroundColor: Colors.blue,
         child: Icon(Icons.add, color: Colors.white,),

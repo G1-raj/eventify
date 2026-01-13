@@ -1,6 +1,7 @@
 import 'package:eventify/core/widgets/action_button/action_button.dart';
 import 'package:eventify/core/widgets/input_field/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -72,11 +73,26 @@ class LoginScreen extends StatelessWidget {
                 width: screenWidth * 0.5,
                 height: screenHeight * 0.05,
                 child: ActionButton(
+                  onPress: () {
+                    context.pushReplacement("/organizer-home");
+                  },
                   buttonText: "Login",
                   buttonColor: Colors.blue,
                   textColor: Colors.white,
                   fontSize: screenWidth * 0.05,
                 )
+               ),
+
+               SizedBox(
+                height: screenHeight * 0.07,
+               ),
+
+               GestureDetector(
+                onTap: () {
+                  context.push("/signup");
+                },
+
+                child: Text("Don't have account? Signup"),
                )
               ],
             ),

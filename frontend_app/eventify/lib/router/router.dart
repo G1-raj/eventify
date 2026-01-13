@@ -6,7 +6,7 @@ import 'package:eventify/features/organizer/organizer_home/presentation/organize
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: "/organizer-home",
+  initialLocation: "/login",
   routes: [
     //auth
     GoRoute(
@@ -31,9 +31,23 @@ final GoRouter router = GoRouter(
       builder: (context, state) => CreateEventScreen(),
     ),
 
-    // GoRoute(
-    //   path: "/event-details",
-    //   builder: (context, state) => EventDetails(eventName: eventName, eventAddress: eventAddress, eventDateTime: eventDateTime, totalSeats: totalSeats, bookedSeats: bookedSeats, seatPrice: seatPrice, eventStatus: eventStatus, isBookingPaused: isBookingPaused),
-    // )
+    GoRoute(
+      path: "/event-details",
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+
+        return EventDetails(
+          imageUrl: data["imageUrl"],
+          eventName: data["eventName"], 
+          eventAddress: data["eventAddress"], 
+          eventDateTime: data["eventDateTime"], 
+          totalSeats: data["totalSeats"], 
+          bookedSeats: data["bookedSeats"], 
+          seatPrice: data["seatPrice"], 
+          eventStatus: data["eventStatus"], 
+          isBookingPaused: data["isBookingPaused"]
+        );
+      }
+    )
   ]
 );
