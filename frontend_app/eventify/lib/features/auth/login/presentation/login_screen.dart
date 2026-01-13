@@ -116,6 +116,7 @@ class LoginScreen extends ConsumerWidget {
                GestureDetector(
                 onTap: () {
                   context.push("/signup");
+                  print("PUsh to signup screen");
                 },
 
                 child: Text("Don't have account? Signup"),
