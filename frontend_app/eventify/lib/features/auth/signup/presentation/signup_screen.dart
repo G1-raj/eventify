@@ -1,16 +1,40 @@
 import 'package:eventify/core/widgets/action_button/action_button.dart';
 import 'package:eventify/core/widgets/input_field/input_field.dart';
+import 'package:eventify/features/auth/signup/data/singup_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends ConsumerWidget {
   SignupScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
 
+  final emailController = TextEditingController();
+  final userNameController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final cnfPasswordController = TextEditingController();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(signupControllerProvider);
+
+    ref.listen(signupControllerProvider, (_, next) {
+      next.whenOrNull(
+        error: (err, _) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(err.toString()))
+          );
+        },
+        data: (_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Signup successful")),
+          );
+        }
+      );
+    });
 
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -47,9 +71,10 @@ class SignupScreen extends StatelessWidget {
 
                 SizedBox(
                   width: screenWidth * 0.8,
-                  child: const InputField(
+                  child: InputField(
                     hintText: "Email",
                     prefixIcon: Icon(Icons.email),
+                    textController: emailController,
                   )
                 ),
 
@@ -59,9 +84,10 @@ class SignupScreen extends StatelessWidget {
 
                 SizedBox(
                   width: screenWidth * 0.8,
-                  child: const InputField(
+                  child: InputField(
                     hintText: "Username",
                     prefixIcon: Icon(Icons.person),
+                    textController: userNameController,
                   )
                 ),
 
@@ -71,9 +97,10 @@ class SignupScreen extends StatelessWidget {
 
                 SizedBox(
                   width: screenWidth * 0.8,
-                  child: const InputField(
+                  child: InputField(
                     hintText: "Full name",
                     prefixIcon: Icon(Icons.person),
+                    textController: fullNameController,
                   )
                 ),
 
@@ -83,10 +110,11 @@ class SignupScreen extends StatelessWidget {
 
                 SizedBox(
                   width: screenWidth * 0.8,
-                  child: const InputField(
+                  child: InputField(
                     isPassword: true,
                     hintText: "Password",
                     prefixIcon: Icon(Icons.lock),
+                    textController: passwordController,
                   )
                 ),
 
@@ -96,10 +124,11 @@ class SignupScreen extends StatelessWidget {
 
                 SizedBox(
                   width: screenWidth * 0.8,
-                  child: const InputField(
+                  child: InputField(
                     isPassword: true,
                     hintText: "Confirm password",
                     prefixIcon: Icon(Icons.lock),
+                    textController: cnfPasswordController,
                   )
                 ),
 
@@ -115,6 +144,15 @@ class SignupScreen extends StatelessWidget {
                     buttonColor: Colors.blue,
                     textColor: Colors.white,
                     fontSize: screenWidth * 0.05,
+                    onPress: state.isLoading ? null : () {
+                      ref.read(signupControllerProvider.notifier).signup(
+                        email: emailController.text, 
+                        username: userNameController.text, 
+                        fullName: fullNameController.text, 
+                        password: passwordController.text, 
+                        role: "user"
+                      );
+                    },
                   )
                 ),
 

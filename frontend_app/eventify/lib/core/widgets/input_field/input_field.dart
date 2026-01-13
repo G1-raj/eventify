@@ -4,12 +4,14 @@ class InputField extends StatefulWidget {
   final bool isPassword;
   final String hintText;
   final Icon prefixIcon;
+  final TextEditingController textController;
   const InputField(
     {
       super.key,
       required this.hintText,
       required this.prefixIcon,
       this.isPassword = false,
+      required this.textController
     }
   );
 
@@ -30,6 +32,7 @@ class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: widget.textController,
       obscureText: _obscureText,
       decoration: InputDecoration(
         prefixIcon: widget.prefixIcon,
