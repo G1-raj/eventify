@@ -32,4 +32,20 @@ class AuthApiService {
       print("Error is: $e");
     }
   }
+
+  Future<void> login({required String email, required String password}) async {
+    try {
+
+      await dio.post(
+        "/auth/login",
+        data: {
+          "email": email,
+          "password": password
+        }
+      );
+      
+    } on DioException catch (e) {
+      throw e.response?.data["detail"] ?? "Invalid credentials";
+    }
+  }
 }

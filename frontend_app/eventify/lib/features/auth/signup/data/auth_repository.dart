@@ -29,4 +29,8 @@ class AuthRepository {
       role: role,
     );
   }
+
+  Future<void> login({required String email, required String password}) {
+    return api.login(email: email, password: password);
+  }
 }
